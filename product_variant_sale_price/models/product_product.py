@@ -27,25 +27,25 @@ class ProductTemplate(models.Model):
             template._update_fix_price(vals)
         return res
 
-    def _get_combination_info(
-        self,
-        combination=False,
-        product_id=False,
-        add_qty=1,
-        pricelist=False,
-        parent_combination=False,
-        only_template=False,
-    ):
-        res = super()._get_combination_info(
-            combination,
-            product_id,
-            add_qty,
-            pricelist,
-            parent_combination,
-            only_template,
-        )
-        res["price_extra"] = 0.0
-        return res
+    # def _get_combination_info(
+    #     self,
+    #     combination=False,
+    #     product_id=False,
+    #     add_qty=1,
+    #     pricelist=False,
+    #     parent_combination=False,
+    #     only_template=False,
+    # ):
+    #     res = super()._get_combination_info(
+    #         combination,
+    #         product_id,
+    #         add_qty,
+    #         pricelist,
+    #         parent_combination,
+    #         only_template,
+    #     )
+    #     res["price_extra"] = 0.0
+    #     return res
 
 
 class ProductProduct(models.Model):
@@ -100,9 +100,9 @@ class ProductProduct(models.Model):
                 ).list_price = min(fix_prices)
             product.write(vals)
 
-    def _compute_product_price_extra(self):
-        """the sale.order.line module calculates the price_unit by adding
-        the value of price_extra and this can generate inconsistencies
-        if the field has old data stored."""
-        for product in self:
-            product.price_extra = 0.0
+    # def _compute_product_price_extra(self):
+    #     """the sale.order.line module calculates the price_unit by adding
+    #     the value of price_extra and this can generate inconsistencies
+    #     if the field has old data stored."""
+    #     for product in self:
+    #         product.price_extra = 0.0
