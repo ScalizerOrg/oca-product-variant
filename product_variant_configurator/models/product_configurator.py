@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 class ProductConfigurator(models.AbstractModel):
     _name = "product.configurator"
     _description = "Product Configurator"
+    _partner_id_field = "partner_id"
 
     product_tmpl_id = fields.Many2one(
         string="Product Template", comodel_name="product.template", auto_join=True
@@ -26,7 +27,7 @@ class ProductConfigurator(models.AbstractModel):
         copy=True,
     )
     price_extra = fields.Float(
-        compute="_compute_can_be_created",
+        compute="_compute_price_extra",
         digits="Product Price",
         help="Price Extra: Extra price for the variant with the currently "
         "selected attributes values on sale price. eg. 200 price extra, "
@@ -43,6 +44,11 @@ class ProductConfigurator(models.AbstractModel):
     can_create_product = fields.Boolean(compute="_compute_can_be_created")
     create_product_variant = fields.Boolean(string="Create product now!")
 
+    @api.depends("product_attribute_ids", "product_attribute_ids.price_extra")
+    def _compute_price_extra(self):
+        for rec in self:
+            rec.price_extra = sum(rec.mapped("product_attribute_ids.price_extra"))
+
     @api.depends(
         "product_attribute_ids", "product_attribute_ids.value_id", "product_id"
     )
@@ -56,7 +62,6 @@ class ProductConfigurator(models.AbstractModel):
                 len(rec.product_tmpl_id.attribute_line_ids.mapped("attribute_id"))
                 - len(list(filter(None, rec.product_attribute_ids.mapped("value_id"))))
             )
-            rec.price_extra = sum(rec.mapped("product_attribute_ids.price_extra"))
 
     @api.depends("product_tmpl_id", "product_attribute_ids")
     def _compute_product_id_configurator_domain(self):
@@ -105,7 +110,6 @@ class ProductConfigurator(models.AbstractModel):
         self.ensure_one()
         if not self.product_tmpl_id._origin:
             self.product_id = False
-            self.product_id = False
             self._empty_attributes()
 
         if (
@@ -147,15 +151,14 @@ class ProductConfigurator(models.AbstractModel):
         if not self.product_id:
             product_tmpl = self.product_tmpl_id
             values = self.product_attribute_ids.mapped("value_id")
-            if "partner_id" in self._fields:
+            if self._partner_id_field in self._fields:
+                partner = self[self._partner_id_field]
                 # If our model has a partner_id field, language is got from it
                 obj = self.env["product.attribute.value"].with_context(
-                    lang=self.partner_id.lang
+                    lang=partner.lang
                 )
                 values = obj.browse(self.product_attribute_ids.mapped("value_id").ids)
-                obj = self.env["product.template"].with_context(
-                    lang=self.partner_id.lang
-                )
+                obj = self.env["product.template"].with_context(lang=partner.lang)
                 product_tmpl = obj.browse(self.product_tmpl_id.id)
             if "name" in self._fields:
                 self.name = self._get_product_description(product_tmpl, False, values)
@@ -165,11 +168,12 @@ class ProductConfigurator(models.AbstractModel):
         self.ensure_one()
         if self.product_id:
             product = self.product_id
-            if "partner_id" in self._fields:
+            if self._partner_id_field in self._fields:
+                partner = self[self._partner_id_field]
                 # If our model has a partner_id field, language is got from it
                 product = (
                     self.env["product.product"]
-                    .with_context(lang=self.partner_id.lang)
+                    .with_context(lang=partner.lang)
                     .browse(self.product_id.id)
                 )
             if "name" in self._fields:
@@ -200,7 +204,7 @@ class ProductConfigurator(models.AbstractModel):
         res2 = []
         for val in res:
             value = product_attribute_values.filtered(
-                lambda x, val=val: x.attribute_id.id == val["attribute_id"]
+                lambda x, val_data=val: x.attribute_id.id == val_data["attribute_id"]
             )
             if value:
                 val["value_id"] = value
@@ -210,7 +214,7 @@ class ProductConfigurator(models.AbstractModel):
     @api.model
     def _get_product_description(self, template, product, product_attributes):
         name = product and product.name or template.name
-        extended = self.user_has_groups(
+        extended = self.env.user.has_groups(
             "product_variant_configurator.group_product_variant_extended_description"
         )
         if not product_attributes and product:
@@ -282,14 +286,14 @@ class ProductConfigurator(models.AbstractModel):
                 existing_attribute_line = (
                     self.product_tmpl_id.attribute_line_ids.filtered(  # noqa
                         lambda line,
-                        product_attribute=product_attribute: line.attribute_id
-                        == product_attribute
+                        product_attribute_data=product_attribute: line.attribute_id
+                        == product_attribute_data
                     )
                 )
                 product_template_attribute_values |= existing_attribute_line.product_template_value_ids.filtered(  # noqa
                     lambda v,
-                    prod_attr_val=product_attribute_value: v.product_attribute_value_id
-                    == prod_attr_val
+                    prod_attr_val_data=product_attribute_value: v.product_attribute_value_id  # noqa
+                    == prod_attr_val_data
                 )
             product = product_obj.create(
                 {

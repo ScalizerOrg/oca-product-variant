@@ -20,7 +20,7 @@ class ProductAttributeValue(models.Model):
             )
             for attr in attr_values:
                 line = template.attribute_line_ids.filtered(
-                    lambda x, attr=attr: x.attribute_id == attr.attribute_id
+                    lambda x, attr_data=attr: x.attribute_id == attr_data.attribute_id
                 )
                 line.value_ids = [(4, attr.id)]
         return attr_values
