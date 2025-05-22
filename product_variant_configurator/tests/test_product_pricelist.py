@@ -189,3 +189,21 @@ class TestProductPriceList(TransactionCase):
             uom=self.iphone_template.uom_po_id.id, date="2016-01-01"
         ).template_price_get(self.iphone_template, 1)[self.pricelist.id]
         self.assertEqual(price, 500)
+
+    def test_compute_price_rule_with_template_and_uom_context(self):
+        """Test price rule computation with template and UOM context"""
+        uom_unit = self.env.ref("uom.product_uom_unit")
+        template = self.env["product.template"].create(
+            {
+                "name": "Priced Template",
+                "list_price": 100.0,
+                "uom_id": uom_unit.id,
+                "uom_po_id": uom_unit.id,
+            }
+        )
+        pricelist = self.env["product.pricelist"].create({"name": "Test"})
+        
+        # Test with UOM context
+        pricelist = pricelist.with_context(uom=uom_unit.id)
+        rules = pricelist._compute_price_rule(template, 1.0)
+        self.assertIsInstance(rules, dict)

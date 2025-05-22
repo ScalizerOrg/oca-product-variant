@@ -70,3 +70,21 @@ class TestPostprocessTagGroupBy(TransactionCase):
         self.assertEqual(
             result, None, "The result should be None, indicating no recursion issues."
         )
+
+    def test_view_postprocess_groupby_recursion_fix(self):
+        """Test the recursion fix in view groupby processing"""
+        from lxml import etree
+
+        view = self.env["ir.ui.view"]
+        node = etree.Element("field", name="product_id")
+
+        # Mock name manager for product.product model
+        class MockNameManager:
+            def __init__(self, model):
+                self.model = model
+
+        name_manager = MockNameManager(self.env["product.product"])
+
+        # This should return None to prevent recursion
+        result = view._postprocess_tag_groupby(node, name_manager, {})
+        self.assertIsNone(result)
