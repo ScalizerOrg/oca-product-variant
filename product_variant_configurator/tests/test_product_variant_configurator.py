@@ -934,8 +934,10 @@ class TestTargetedConfiguratorCoverage(TransactionCase):
 
 class TestTargetedConfiguratorCoveragePart2(TransactionCase):
     """
-    Second round of targeted tests for remaining uncovered lines in product_configurator.py
-    Focus: Lines 49-50, 80-84, 92, 106, 112-113, 122, 126, 131-134, 148-150, 155-157, 160-162, 172-174, 193-199, 252-253, 270-274, 278+
+    Second round of targeted tests for remaining uncovered lines in 
+    product_configurator.py
+    Focus: Lines 49-50, 80-84, 92, 106, 112-113, 122, 126, 131-134, 148-150, 155-157, 
+    160-162, 172-174, 193-199, 252-253, 270-274, 278+
     """
 
     @classmethod
@@ -1070,7 +1072,8 @@ class TestTargetedConfiguratorCoveragePart2(TransactionCase):
             }
         )
 
-        # This should not go into partner logic since product.product doesn't have partner_id
+        # This should not go into partner logic since 
+        # product.product doesn't have partner_id
         product._onchange_product_attribute_ids_configurator()
 
     def test_onchange_product_id_no_product(self):
@@ -1122,7 +1125,8 @@ class TestTargetedConfiguratorCoveragePart2(TransactionCase):
         # Should not auto-select variant since there are attributes
 
     def test_onchange_template_no_attributes_unique_variant(self):
-        """Target lines 155, 157: template without attributes should set unique variant"""
+        """Target lines 155, 157: template 
+        without attributes should set unique variant"""
         template = self.env["product.template"].create(
             {
                 "name": "No Attributes Template"
@@ -1275,7 +1279,7 @@ class TestTargetedConfiguratorCoveragePart2(TransactionCase):
         )
 
         # This should trigger validation error handling (lines 270-274)
-        result = product._onchange_create_product_variant()
+        product._onchange_create_product_variant()
         # The method should handle the validation error and return warning
 
     def test_create_variant_if_needed_full_flow(self):
