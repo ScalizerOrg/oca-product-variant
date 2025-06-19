@@ -934,9 +934,9 @@ class TestTargetedConfiguratorCoverage(TransactionCase):
 
 class TestTargetedConfiguratorCoveragePart2(TransactionCase):
     """
-    Second round of targeted tests for remaining uncovered lines in 
+    Second round of targeted tests for remaining uncovered lines in
     product_configurator.py
-    Focus: Lines 49-50, 80-84, 92, 106, 112-113, 122, 126, 131-134, 148-150, 155-157, 
+    Focus: Lines 49-50, 80-84, 92, 106, 112-113, 122, 126, 131-134, 148-150, 155-157,
     160-162, 172-174, 193-199, 252-253, 270-274, 278+
     """
 
@@ -1072,7 +1072,7 @@ class TestTargetedConfiguratorCoveragePart2(TransactionCase):
             }
         )
 
-        # This should not go into partner logic since 
+        # This should not go into partner logic since
         # product.product doesn't have partner_id
         product._onchange_product_attribute_ids_configurator()
 
@@ -1125,7 +1125,7 @@ class TestTargetedConfiguratorCoveragePart2(TransactionCase):
         # Should not auto-select variant since there are attributes
 
     def test_onchange_template_no_attributes_unique_variant(self):
-        """Target lines 155, 157: template 
+        """Target lines 155, 157: template
         without attributes should set unique variant"""
         template = self.env["product.template"].create(
             {
