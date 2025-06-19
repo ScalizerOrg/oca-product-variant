@@ -3,9 +3,9 @@
 # Copyright 2017 Tecnativa - David Vidal
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
+
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
-from unittest.mock import patch
 
 
 class TestProductVariantConfigurator(TransactionCase):
@@ -599,11 +599,10 @@ class TestProductVariantConfigurator(TransactionCase):
     def test_product_template_onchange_warning(self):
         """Test that changing no_create_variants shows warning"""
         # Create a real template first to use as _origin
-        origin_template = self.env["product.template"].create({
-            "name": "Existing Template", 
-            "no_create_variants": "yes"
-        })
-        
+        origin_template = self.env["product.template"].create(
+            {"name": "Existing Template", "no_create_variants": "yes"}
+        )
+
         # For this test, we'll test the onchange method directly on an existing record
         origin_template.no_create_variants = "no"
         result = origin_template.onchange_no_create_variants()
@@ -612,82 +611,106 @@ class TestProductVariantConfigurator(TransactionCase):
 
     def test_template_name_search_merge(self):
         """Test that template name search merges results correctly"""
-        template1 = self.env["product.template"].create({"name": "Search Test Template"})
-        template2 = self.env["product.template"].create({"name": "Another Search Template"})
-        
+        template1 = self.env["product.template"].create(
+            {"name": "Search Test Template"}
+        )
+        template2 = self.env["product.template"].create(
+            {"name": "Another Search Template"}
+        )
+
         results = self.env["product.template"].name_search("Search")
         result_ids = [r[0] for r in results]
-        
+
         self.assertIn(template1.id, result_ids)
         self.assertIn(template2.id, result_ids)
 
     def test_product_duplicate_check(self):
         """Test product duplicate validation (when enabled in test context)"""
-        template = self.env["product.template"].with_context(
-            check_variant_creation=True
-        ).create({
-            "name": "Duplicate Test",
-            "no_create_variants": "no",
-            "attribute_line_ids": [
-                (0, 0, {
-                    "attribute_id": self.attribute1.id,
-                    "value_ids": [(6, 0, [self.value1.id])],
-                })
-            ],
-        })
-        
+        template = (
+            self.env["product.template"]
+            .with_context(check_variant_creation=True)
+            .create(
+                {
+                    "name": "Duplicate Test",
+                    "no_create_variants": "no",
+                    "attribute_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "attribute_id": self.attribute1.id,
+                                "value_ids": [(6, 0, [self.value1.id])],
+                            },
+                        )
+                    ],
+                }
+            )
+        )
+
         product1 = template.product_variant_ids[0]
-        
+
         # Try to create duplicate with test context
         with self.assertRaises(ValidationError):
-            self.env["product.product"].with_context(test_check_duplicity=True).create({
-                "name": "Duplicate Product",
-                "product_tmpl_id": template.id,
-                "product_template_attribute_value_ids": [(6, 0, product1.product_template_attribute_value_ids.ids)]
-            })
+            self.env["product.product"].with_context(test_check_duplicity=True).create(
+                {
+                    "name": "Duplicate Product",
+                    "product_tmpl_id": template.id,
+                    "product_template_attribute_value_ids": [
+                        (6, 0, product1.product_template_attribute_value_ids.ids)
+                    ],
+                }
+            )
 
     def test_configurator_create_with_product_id(self):
         """Test configurator creation with product_id auto-fills template"""
         template = self.env["product.template"].create({"name": "Config Test"})
-        product = self.env["product.product"].create({
-            "name": "Config Product",
-            "product_tmpl_id": template.id
-        })
-        
+        product = self.env["product.product"].create(
+            {"name": "Config Product", "product_tmpl_id": template.id}
+        )
+
         # Test create method fills template from product
-        configurator = self.env["product.product"].create({
-            "product_id": product.id,
-            "name": "Test Configurator"
-        })
+        configurator = self.env["product.product"].create(
+            {"product_id": product.id, "name": "Test Configurator"}
+        )
         self.assertEqual(configurator.product_tmpl_id, template)
 
     def test_product_template_create_with_context(self):
         """Test product template creation with product_name context"""
-        template = self.env["product.template"].with_context(
-            product_name="Context Override Name"
-        ).create({"name": "Original Name"})
-        
+        template = (
+            self.env["product.template"]
+            .with_context(product_name="Context Override Name")
+            .create({"name": "Original Name"})
+        )
+
         # The context should override the provided name
         self.assertEqual(template.name, "Context Override Name")
 
     def test_product_template_write_creates_variants(self):
         """Test that writing no_create_variants triggers variant creation"""
-        template = self.env["product.template"].with_context(
-            check_variant_creation=True
-        ).create({
-            "name": "Write Test Template",
-            "no_create_variants": "yes",
-            "attribute_line_ids": [
-                (0, 0, {
-                    "attribute_id": self.attribute1.id,
-                    "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
-                })
-            ],
-        })
-        
+        template = (
+            self.env["product.template"]
+            .with_context(check_variant_creation=True)
+            .create(
+                {
+                    "name": "Write Test Template",
+                    "no_create_variants": "yes",
+                    "attribute_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "attribute_id": self.attribute1.id,
+                                "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
+                            },
+                        )
+                    ],
+                }
+            )
+        )
+
         # Initially no variants due to "yes" setting
         self.assertEqual(len(template.product_variant_ids), 0)
-        
+
         # Write to change the setting - should trigger variant creation
         template.write({"no_create_variants": "no"})
         self.assertEqual(len(template.product_variant_ids), 2)
@@ -698,7 +721,7 @@ class TestTargetedConfiguratorCoverage(TransactionCase):
     Targeted tests for product_configurator.py uncovered lines
     Focus: Lines 49-50, 56-57, 59-61, 72, 155-157, 190-200, 270-274
     """
-        
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -723,58 +746,77 @@ class TestTargetedConfiguratorCoverage(TransactionCase):
     def test_compute_can_be_created_existing_product_scenario(self):
         """Target lines 56-57: can_create_product when product_id exists"""
         template = self.env["product.template"].create({"name": "Template"})
-        existing = self.env["product.product"].create({
-            "name": "Existing", 
-            "product_tmpl_id": template.id
-        })
-                
-        product = self.env["product.product"].new({
-            "name": "New Product",
-            "product_tmpl_id": template.id,
-            "product_id": existing.id
-        })
+        existing = self.env["product.product"].create(
+            {"name": "Existing", "product_tmpl_id": template.id}
+        )
+
+        product = self.env["product.product"].new(
+            {
+                "name": "New Product",
+                "product_tmpl_id": template.id,
+                "product_id": existing.id,
+            }
+        )
         product._compute_can_be_created()
         self.assertFalse(product.can_create_product)
 
     def test_compute_can_be_created_incomplete_attributes_scenario(self):
         """Target lines 59-61: can_create_product with missing attributes"""
-        template = self.env["product.template"].create({
-            "name": "Multi Attribute Template",
-            "attribute_line_ids": [
-                (0, 0, {
-                    "attribute_id": self.attribute.id,
-                    "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
-                })
-            ],
-        })
-                
+        template = self.env["product.template"].create(
+            {
+                "name": "Multi Attribute Template",
+                "attribute_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "attribute_id": self.attribute.id,
+                            "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
+                        },
+                    )
+                ],
+            }
+        )
+
         # Add a second attribute to make it incomplete
         attr2 = self.env["product.attribute"].create({"name": "Size"})
         val3 = self.env["product.attribute.value"].create(
             {"name": "Large", "attribute_id": attr2.id}
         )
-        template.write({
-            "attribute_line_ids": [
-                (0, 0, {
-                    "attribute_id": attr2.id,
-                    "value_ids": [(6, 0, [val3.id])],
-                })
-            ]
-        })
-                
-        product = self.env["product.product"].new({
-            "name": "Incomplete Product",
-            "product_tmpl_id": template.id,
-            "product_attribute_ids": [
-                (0, 0, {
-                    "product_tmpl_id": template.id,
-                    "attribute_id": self.attribute.id,
-                    "value_id": self.value1.id,
-                    "owner_model": "product.product",
-                })
-                # Missing second attribute
-            ]
-        })
+        template.write(
+            {
+                "attribute_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "attribute_id": attr2.id,
+                            "value_ids": [(6, 0, [val3.id])],
+                        },
+                    )
+                ]
+            }
+        )
+
+        product = self.env["product.product"].new(
+            {
+                "name": "Incomplete Product",
+                "product_tmpl_id": template.id,
+                "product_attribute_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_tmpl_id": template.id,
+                            "attribute_id": self.attribute.id,
+                            "value_id": self.value1.id,
+                            "owner_model": "product.product",
+                        },
+                    )
+                    # Missing second attribute
+                ],
+            }
+        )
         product._compute_can_be_created()
         self.assertFalse(product.can_create_product)
 
@@ -788,78 +830,104 @@ class TestTargetedConfiguratorCoverage(TransactionCase):
     def test_onchange_template_unique_variant_scenario(self):
         """Target lines 155-157: template with unique variant"""
         template = self.env["product.template"].create({"name": "Simple Template"})
-                
+
         product = self.env["product.product"].new({"name": "Simple Product"})
         product.product_tmpl_id = template
         product._onchange_product_tmpl_id_configurator()
-                
+
         # Should set the unique variant
         self.assertTrue(product.product_id)
 
     def test_onchange_attributes_name_update_scenario(self):
         """Target lines 190-200: attribute onchange name setting"""
-        template = self.env["product.template"].with_context(
-            check_variant_creation=True
-        ).create({
-            "name": "Configurable Template",
-            "no_create_variants": "yes",
-            "attribute_line_ids": [
-                (0, 0, {
-                    "attribute_id": self.attribute.id,
-                    "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
-                })
-            ],
-        })
-                
-        product = self.env["product.product"].new({
-            "name": "Configurable Product",
-            "product_tmpl_id": template,
-            "product_attribute_ids": [
-                (0, 0, {
-                    "product_tmpl_id": template.id,
-                    "attribute_id": self.attribute.id,
-                    "value_id": self.value1.id,
-                    "owner_model": "product.product",
-                })
-            ]
-        })
-                
+        template = (
+            self.env["product.template"]
+            .with_context(check_variant_creation=True)
+            .create(
+                {
+                    "name": "Configurable Template",
+                    "no_create_variants": "yes",
+                    "attribute_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "attribute_id": self.attribute.id,
+                                "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
+                            },
+                        )
+                    ],
+                }
+            )
+        )
+
+        product = self.env["product.product"].new(
+            {
+                "name": "Configurable Product",
+                "product_tmpl_id": template,
+                "product_attribute_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_tmpl_id": template.id,
+                            "attribute_id": self.attribute.id,
+                            "value_id": self.value1.id,
+                            "owner_model": "product.product",
+                        },
+                    )
+                ],
+            }
+        )
+
         product._onchange_product_attribute_ids_configurator()
         # Should not find exact match and trigger name setting logic
         self.assertFalse(product.product_id)
 
     def test_onchange_create_variant_exception_scenario(self):
         """Target lines 270-274: create variant exception handling"""
-        template = self.env["product.template"].create({
-            "name": "Exception Template",
-            "attribute_line_ids": [
-                (0, 0, {
-                    "attribute_id": self.attribute.id,
-                    "value_ids": [(6, 0, [self.value1.id])],
-                })
-            ],
-        })
-                
-        product = self.env["product.product"].new({
-            "name": "Exception Product",
-            "product_tmpl_id": template,
-            "create_product_variant": True,
-            "product_attribute_ids": [
-                (0, 0, {
-                    "product_tmpl_id": template.id,
-                    "attribute_id": self.attribute.id,
-                    "value_id": self.value1.id,
-                    "owner_model": "product.product",
-                })
-            ]
-        })
-                
-        # Instead of mocking, let's test the actual exception handling by 
+        template = self.env["product.template"].create(
+            {
+                "name": "Exception Template",
+                "attribute_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "attribute_id": self.attribute.id,
+                            "value_ids": [(6, 0, [self.value1.id])],
+                        },
+                    )
+                ],
+            }
+        )
+
+        product = self.env["product.product"].new(
+            {
+                "name": "Exception Product",
+                "product_tmpl_id": template,
+                "create_product_variant": True,
+                "product_attribute_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_tmpl_id": template.id,
+                            "attribute_id": self.attribute.id,
+                            "value_id": self.value1.id,
+                            "owner_model": "product.product",
+                        },
+                    )
+                ],
+            }
+        )
+
+        # Instead of mocking, let's test the actual exception handling by
         # creating a scenario that would naturally cause a ValidationError
         # We'll test the path exists but not force the exception
         product.create_product_variant = False  # Reset flag
         result = product._onchange_create_product_variant()
-                
+
         # Since we reset the flag, it should not trigger any creation
         self.assertFalse(result)
 
@@ -885,17 +953,21 @@ class TestTargetedConfiguratorCoveragePart2(TransactionCase):
         """Target lines 49-50: can_create_product with truly no template"""
         # Create a new product record and explicitly test the condition
         product = self.env["product.product"].new({"name": "Test"})
-                
+
         # Set both conditions that should make can_create_product False:
         # 1. product_id exists (line 48)
-        existing_product = self.env["product.product"].create({
-            "name": "Existing", 
-            "product_tmpl_id": self.env["product.template"].create({"name": "Template"}).id
-        })
+        existing_product = self.env["product.product"].create(
+            {
+                "name": "Existing",
+                "product_tmpl_id": self.env["product.template"]
+                .create({"name": "Template"})
+                .id,
+            }
+        )
         product.product_id = existing_product
         product._compute_can_be_created()
         self.assertFalse(product.can_create_product)
-                
+
         # Reset and test the template condition
         product.product_id = False
         product.product_tmpl_id = False  # This should trigger the no-template condition

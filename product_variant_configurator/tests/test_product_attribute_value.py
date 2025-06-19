@@ -1,5 +1,6 @@
 from odoo.tests.common import TransactionCase
 
+
 class TestProductAttributeValue(TransactionCase):
     def setUp(self):
         super().setUp()
@@ -23,12 +24,14 @@ class TestProductAttributeValue(TransactionCase):
         attribute_value = (
             self.env["product.attribute.value"]
             .with_context(template_for_attribute_value=self.product_template.id)
-            .create([
-                {
-                    "name": "Test Value",
-                    "attribute_id": self.product_attribute.id,
-                }
-            ])
+            .create(
+                [
+                    {
+                        "name": "Test Value",
+                        "attribute_id": self.product_attribute.id,
+                    }
+                ]
+            )
         )
 
         self.assertEqual(
@@ -39,9 +42,9 @@ class TestProductAttributeValue(TransactionCase):
 
     def test_name_search_limit_reached_scenario(self):
         for i in range(10):
-            self.env["product.template"].create({
-                "name": f"Limit Test Template {i:02d}"
-            })
+            self.env["product.template"].create(
+                {"name": f"Limit Test Template {i:02d}"}
+            )
 
         results = self.env["product.template"].name_search("Limit Test", limit=3)
         self.assertLessEqual(len(results), 3)
@@ -50,21 +53,24 @@ class TestProductAttributeValue(TransactionCase):
         self.assertGreaterEqual(len(all_results), 3)
 
     def test_template_create_variant_edge_cases_scenario(self):
-        template = self.env["product.template"].create({
-            "name": "Edge Case Template",
-            "no_create_variants": "no"
-        })
+        template = self.env["product.template"].create(
+            {"name": "Edge Case Template", "no_create_variants": "no"}
+        )
 
         result = template._create_variant_ids()
         self.assertTrue(result)
 
     def test_template_write_variant_creation_scenario(self):
-        template = self.env["product.template"].with_context(
-            check_variant_creation=True
-        ).create({
-            "name": "Write Test Template",
-            "no_create_variants": "yes",
-        })
+        template = (
+            self.env["product.template"]
+            .with_context(check_variant_creation=True)
+            .create(
+                {
+                    "name": "Write Test Template",
+                    "no_create_variants": "yes",
+                }
+            )
+        )
 
         initial_count = len(template.product_variant_ids)
 
@@ -101,8 +107,6 @@ class TestProductAttributeValue(TransactionCase):
         value = (
             self.env["product.attribute.value"]
             .with_context(template_for_attribute_value=template.id)
-            .create([
-                {"name": "New Value", "attribute_id": self.product_attribute.id}
-            ])
+            .create([{"name": "New Value", "attribute_id": self.product_attribute.id}])
         )
         self.assertIn(value, line.value_ids)

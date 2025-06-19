@@ -163,24 +163,26 @@ class TestProductVariant(TransactionCase):
         category = self.env["product.category"].create(
             {"name": "Test", "no_create_variants": True}
         )
-        template = self.env["product.template"].with_context(
-            check_variant_creation=True
-        ).create(
-            {
-                "name": "Template with Empty",
-                "no_create_variants": "empty",
-                "categ_id": category.id,
-                "attribute_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "attribute_id": self.attribute.id,
-                            "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
-                        },
-                    )
-                ],
-            }
+        template = (
+            self.env["product.template"]
+            .with_context(check_variant_creation=True)
+            .create(
+                {
+                    "name": "Template with Empty",
+                    "no_create_variants": "empty",
+                    "categ_id": category.id,
+                    "attribute_line_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "attribute_id": self.attribute.id,
+                                "value_ids": [(6, 0, [self.value1.id, self.value2.id])],
+                            },
+                        )
+                    ],
+                }
+            )
         )
         # Initially should have no variants due to category setting
         self.assertEqual(len(template.product_variant_ids), 0)
@@ -191,7 +193,9 @@ class TestProductVariant(TransactionCase):
 
     def test_category_onchange_warning(self):
         """Test category onchange warning"""
-        category = self.env["product.category"].new({"name": "Test", "no_create_variants": True})
+        category = self.env["product.category"].new(
+            {"name": "Test", "no_create_variants": True}
+        )
         category.no_create_variants = False
         result = category.onchange_no_create_variants()
         self.assertIn("warning", result)

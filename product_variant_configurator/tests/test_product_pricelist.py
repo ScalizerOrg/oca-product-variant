@@ -202,7 +202,7 @@ class TestProductPriceList(TransactionCase):
             }
         )
         pricelist = self.env["product.pricelist"].create({"name": "Test"})
-        
+
         # Test with UOM context
         pricelist = pricelist.with_context(uom=uom_unit.id)
         rules = pricelist._compute_price_rule(template, 1.0)

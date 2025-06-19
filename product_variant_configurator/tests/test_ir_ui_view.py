@@ -73,7 +73,6 @@ class TestPostprocessTagGroupBy(TransactionCase):
 
     def test_view_postprocess_groupby_recursion_fix(self):
         """Test the recursion fix in view groupby processing"""
-        from lxml import etree
 
         view = self.env["ir.ui.view"]
         node = etree.Element("field", name="product_id")
