@@ -11,4 +11,3 @@
 - Héctor Villarreal Ortega \<<hector.villarreal@forgeflow.com>\>
 - [Heliconia Solutions Pvt. Ltd.](https://www.heliconia.io)
   - Bhavesh Heliconia
-

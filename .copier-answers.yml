@@ -24,4 +24,3 @@ repo_slug: product-variant
 repo_website: https://github.com/OCA/product-variant
 use_pyproject_toml: true
 use_ruff: true
-
