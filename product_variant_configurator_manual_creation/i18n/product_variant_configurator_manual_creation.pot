@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 15.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -64,12 +64,6 @@ msgid "ID"
 msgstr ""
 
 #. module: product_variant_configurator_manual_creation
-#: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation____last_update
-#: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation_line____last_update
-msgid "Last Modified on"
-msgstr ""
-
-#. module: product_variant_configurator_manual_creation
 #: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation__write_uid
 #: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation_line__write_uid
 msgid "Last Updated by"
@@ -98,12 +92,17 @@ msgstr ""
 
 #. module: product_variant_configurator_manual_creation
 #: model:ir.model,name:product_variant_configurator_manual_creation.model_product_template
-msgid "Product Template"
+msgid "Product"
 msgstr ""
 
 #. module: product_variant_configurator_manual_creation
 #: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation_line__required
 msgid "Required?"
+msgstr ""
+
+#. module: product_variant_configurator_manual_creation
+#: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation_line__selected_value_ids
+msgid "Selected Values"
 msgstr ""
 
 #. module: product_variant_configurator_manual_creation
@@ -113,7 +112,6 @@ msgstr ""
 
 #. module: product_variant_configurator_manual_creation
 #: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation_line__attribute_value_ids
-#: model:ir.model.fields,field_description:product_variant_configurator_manual_creation.field_wizard_product_variant_configurator_manual_creation_line__selected_value_ids
 msgid "Values"
 msgstr ""
 
