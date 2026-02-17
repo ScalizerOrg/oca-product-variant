@@ -135,7 +135,7 @@ class ProductProduct(models.Model):
         """
         _self = self
         for product in self:
-            if isinstance(product.id, models.NewId):
+            if not product._origin:
                 product.display_name = product.name or ""
                 _self -= product
         return super(ProductProduct, _self)._compute_display_name()

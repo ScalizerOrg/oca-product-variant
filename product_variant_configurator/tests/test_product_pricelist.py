@@ -17,18 +17,31 @@ class TestProductPriceList(BaseCommon):
         )
         cls.product_pricelist = cls.env["product.pricelist"]
         cls.supplier_info = cls.env["product.supplierinfo"]
-        cls.uom_unit = cls.env.ref("uom.product_uom_unit")
-
+        cls.uom_unit = cls.env["uom.uom"].create(
+            {"name": "Units", "relative_factor": "1.0"}
+        )
         # Instances: Product attribute
-        cls.physical = cls.env.ref("product.product_category_5")
+        cls.physical = cls.env["product.category"].create({"name": "Goods"})
 
-        cls.attribute1 = cls.env.ref("product.product_attribute_1")
-        cls.value1 = cls.env.ref("product.product_attribute_value_1")
-        cls.value2 = cls.env.ref("product.product_attribute_value_2")
+        cls.attribute1 = cls.env["product.attribute"].create(
+            {"name": "Brand", "sequence": 10}
+        )
+        cls.value1 = cls.env["product.attribute.value"].create(
+            {"name": "Adidas", "attribute_id": cls.attribute1.id}
+        )
+        cls.value2 = cls.env["product.attribute.value"].create(
+            {"name": "Apple", "attribute_id": cls.attribute1.id}
+        )
 
-        cls.attribute2 = cls.env.ref("product.product_attribute_2")
-        cls.value3 = cls.env.ref("product.product_attribute_value_3")
-        cls.value4 = cls.env.ref("product.product_attribute_value_4")
+        cls.attribute2 = cls.env["product.attribute"].create(
+            {"name": "Color", "sequence": 30}
+        )
+        cls.value3 = cls.env["product.attribute.value"].create(
+            {"name": "White", "attribute_id": cls.attribute2.id}
+        )
+        cls.value4 = cls.env["product.attribute.value"].create(
+            {"name": "Black", "attribute_id": cls.attribute2.id}
+        )
 
         cls.ipad_template = cls.product_template.create(
             {
@@ -39,7 +52,6 @@ class TestProductPriceList(BaseCommon):
                 "list_price": 750,
                 "standard_price": 500,
                 "uom_id": cls.uom_unit.id,
-                "uom_po_id": cls.uom_unit.id,
                 "attribute_line_ids": [
                     Command.create(
                         {
@@ -58,6 +70,7 @@ class TestProductPriceList(BaseCommon):
         )
 
         cls.ipad_product = cls.ipad_template.product_variant_ids[0]
+        cls.partner1 = cls.env["res.partner"].create({"name": "Partner1"})
 
         cls.iphone_template = cls.product_template.create(
             {
@@ -68,7 +81,6 @@ class TestProductPriceList(BaseCommon):
                 "list_price": 500,
                 "standard_price": 300,
                 "uom_id": cls.uom_unit.id,
-                "uom_po_id": cls.uom_unit.id,
                 "attribute_line_ids": [
                     Command.create(
                         {
@@ -86,7 +98,7 @@ class TestProductPriceList(BaseCommon):
                 "seller_ids": [
                     Command.create(
                         {
-                            "partner_id": cls.env.ref("base.res_partner_1").id,
+                            "partner_id": cls.partner1.id,
                             "delay": 3,
                             "min_qty": 1,
                             "price": 300,
@@ -94,7 +106,7 @@ class TestProductPriceList(BaseCommon):
                     ),
                     Command.create(
                         {
-                            "partner_id": cls.env.ref("base.res_partner_1").id,
+                            "partner_id": cls.partner1.id,
                             "delay": 3,
                             "min_qty": 4,
                             "price": 290,
@@ -151,7 +163,7 @@ class TestProductPriceList(BaseCommon):
         # Price for ipad product
         # Must be 600
         price = self.pricelist.with_context(
-            uom=self.ipad_product.uom_po_id.id, date="2016-01-01"
+            uom=self.ipad_product.uom_id.id, date="2016-01-01"
         )._price_get(self.ipad_product, 1)[self.pricelist.id]
         self.assertEqual(price, 750 * 0.8)
 
@@ -159,16 +171,16 @@ class TestProductPriceList(BaseCommon):
         # Price for iphone template with correct partner
         # Price must be 450
         price = self.pricelist.with_context(
-            uom=self.iphone_template.uom_po_id.id, date="2016-01-01"
-        ).template_price_get(
-            self.iphone_template, 4, self.env.ref("base.res_partner_1").id
-        )[self.pricelist.id]
+            uom=self.iphone_template.uom_id.id, date="2016-01-01"
+        ).template_price_get(self.iphone_template, 4, self.partner1.id)[
+            self.pricelist.id
+        ]
         self.assertEqual(price, 500 * 0.9)
 
     def test_03_price_rule_get_multi_template(self):
         # Price for ipad template
         # must be 500
         price = self.pricelist.with_context(
-            uom=self.iphone_template.uom_po_id.id, date="2016-01-01"
+            uom=self.iphone_template.uom_id.id, date="2016-01-01"
         ).template_price_get(self.iphone_template, 1)[self.pricelist.id]
         self.assertEqual(price, 500)

@@ -272,7 +272,7 @@ class TestProductVariantConfigurator(BaseCommon):
         group_id = (
             "product_variant_configurator.group_product_variant_extended_description"
         )
-        self.env.ref(group_id).write({"users": [Command.link(self.current_user.id)]})
+        self.env.ref(group_id).write({"user_ids": [Command.link(self.current_user.id)]})
         self.assertEqual(
             product._get_product_description(
                 product.product_tmpl_id,

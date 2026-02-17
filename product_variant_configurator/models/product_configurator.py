@@ -6,7 +6,7 @@
 import logging
 
 from odoo import Command, api, exceptions, fields, models
-from odoo.osv.expression import TRUE_DOMAIN
+from odoo.fields import Domain
 
 _logger = logging.getLogger(__name__)
 
@@ -16,7 +16,9 @@ class ProductConfigurator(models.AbstractModel):
     _description = "Product Configurator"
 
     product_tmpl_id = fields.Many2one(
-        string="Product Template", comodel_name="product.template", auto_join=True
+        string="Product Template",
+        comodel_name="product.template",
+        bypass_search_access=True,
     )
     product_attribute_ids = fields.One2many(
         comodel_name="product.configurator.attribute",
@@ -68,7 +70,7 @@ class ProductConfigurator(models.AbstractModel):
         for rec in self:
             if not rec.product_tmpl_id._origin:
                 # no product template: allow any product
-                rec.product_id_configurator_domain = TRUE_DOMAIN
+                rec.product_id_configurator_domain = Domain.TRUE
             else:
                 domain, _cont = product_obj._build_attributes_domain(
                     rec.product_tmpl_id, rec.product_attribute_ids

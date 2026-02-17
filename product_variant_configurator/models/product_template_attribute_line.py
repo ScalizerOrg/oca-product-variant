@@ -12,13 +12,10 @@ class ProductTemplateAttributeLine(models.Model):
         default=False,
     )
 
-    _sql_constraints = [
-        (
-            "product_attribute_uniq",
-            "unique(product_tmpl_id, attribute_id)",
-            "The attribute already exists for this product",
-        )
-    ]
+    _product_attribute_uniq = models.Constraint(
+        "unique(product_tmpl_id, attribute_id)",
+        "The attribute already exists for this product",
+    )
 
     @api.onchange("attribute_id")
     def _onchange_attribute_id_clean_value(self):

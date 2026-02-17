@@ -79,14 +79,14 @@ class ProductTemplate(models.Model):
         return True
 
     @api.model
-    def name_search(self, name="", args=None, operator="ilike", limit=100):
+    def name_search(self, name="", domain=None, operator="ilike", limit=100):
         # Make a search with default criteria
         temp = super(models.Model, self).name_search(
-            name=name, args=args, operator=operator, limit=limit
+            name=name, domain=domain, operator=operator, limit=limit
         )
         # Make the other search
         temp += super().name_search(
-            name=name, args=args, operator=operator, limit=limit
+            name=name, domain=domain, operator=operator, limit=limit
         )
         # Merge both results
         res = []

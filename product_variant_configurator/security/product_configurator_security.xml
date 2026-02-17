@@ -4,6 +4,5 @@
         <field
             name="name"
         >Use extended description when having product attributes</field>
-        <field name="category_id" ref="base.module_category_hidden" />
     </record>
 </odoo>
