@@ -38,8 +38,7 @@ class ProductTemplate(models.Model):
                 "warning": {
                     "title": self.env._("Change warning!"),
                     "message": self.env._(
-                        "Changing this parameter may cause"
-                        " automatic variants creation"
+                        "Changing this parameter may cause automatic variants creation"
                     ),
                 }
             }

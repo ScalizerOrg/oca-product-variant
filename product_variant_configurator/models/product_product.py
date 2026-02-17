@@ -121,8 +121,10 @@ class ProductProduct(models.Model):
             )
             if errors:
                 raise exceptions.ValidationError(
-                    self.env._("You have to fill the following attributes:\n%s")
-                    % "\n".join(errors.mapped("name"))
+                    self.env._(
+                        "You have to fill the following attributes:\n%s",
+                        "\n".join(errors.mapped("name")),
+                    )
                 )
 
     def _compute_display_name(self):

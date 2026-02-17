@@ -270,7 +270,7 @@ class TestProductVariantConfigurator(BaseCommon):
         self.current_user = self.env.user
         # Add current user to group: group_supplier_inv_check_total
         group_id = (
-            "product_variant_configurator." "group_product_variant_extended_description"
+            "product_variant_configurator.group_product_variant_extended_description"
         )
         self.env.ref(group_id).write({"users": [Command.link(self.current_user.id)]})
         self.assertEqual(
