@@ -1,0 +1,11 @@
+[project]
+name = "odoo-addons-oca-product-variant"
+version = "19.0.20260427.0"
+dependencies = [
+    "odoo-addon-product_variant_attribute_tax==19.0.*",
+]
+classifiers=[
+    "Programming Language :: Python",
+    "Framework :: Odoo",
+    "Framework :: Odoo :: 19.0",
+]
