@@ -22,6 +22,7 @@ Available addons
 addon | version | maintainers | summary
 --- | --- | --- | ---
 [product_variant_attribute_tax](product_variant_attribute_tax/) | 19.0.1.0.0 |  | Set taxes on the product attribute values
+[product_variant_configurator](product_variant_configurator/) | 19.0.1.0.0 |  | Provides an abstract model for product variant configuration.
 
 [//]: # (end addons)
 
