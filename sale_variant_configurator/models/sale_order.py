@@ -9,14 +9,14 @@ from odoo import api, fields, models
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    def _action_confirm(self):
+    def action_confirm(self):
         """Create possible product variants not yet created."""
         lines_without_product = self.mapped("order_line").filtered(
             lambda x: not x.product_id and x.product_tmpl_id
         )
         for line in lines_without_product:
             line.create_variant_if_needed()
-        return super()._action_confirm()
+        return super().action_confirm()
 
 
 class SaleOrderLine(models.Model):
@@ -30,25 +30,19 @@ class SaleOrderLine(models.Model):
         related=False,
         string="Product Template (no related)",
     )
-    product_id = fields.Many2one(required=False)
 
-    _sql_constraints = [
-        (
-            "accountable_required_fields",
-            "CHECK(display_type IS NOT NULL OR "
-            "((product_id IS NOT NULL OR product_tmpl_id IS NOT NULL) AND "
-            "product_uom IS NOT NULL))",
-            "Missing required fields on accountable sale order line.",
-        ),
-        (
-            "non_accountable_null_fields",
-            "CHECK(display_type IS NULL OR "
-            "(product_id IS NULL AND product_tmpl_id IS NULL AND "
-            "price_unit = 0 AND product_uom_qty = 0 AND "
-            "product_uom IS NULL AND customer_lead = 0))",
-            "Forbidden values on non-accountable sale order line",
-        ),
-    ]
+    _accountable_required_fields = models.Constraint(
+        "CHECK(display_type IS NOT NULL OR is_downpayment OR "
+        "(product_tmpl_id IS NOT NULL OR product_id IS NOT NULL AND "
+        "product_uom_id IS NOT NULL))",
+        "Missing required fields on accountable sale order line.",
+    )
+    _non_accountable_null_fields = models.Constraint(
+        "CHECK(display_type IS NULL OR (product_tmpl_id IS NULL AND "
+        "product_id IS NULL AND price_unit = 0 AND product_uom_qty = 0 "
+        "AND product_uom_id IS NULL AND customer_lead = 0))",
+        "Forbidden values on non-accountable sale order line",
+    )
 
     @api.model_create_multi
     def create(self, vals_list):

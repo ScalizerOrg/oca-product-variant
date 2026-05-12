@@ -77,7 +77,7 @@ class TestSaleOrder(BaseCommon):
                 "name": "Line 1",
                 "product_tmpl_id": self.product_template_yes.id,
                 "price_unit": 100,
-                "product_uom": self.product_template_yes.uom_id.id,
+                "product_uom_id": self.product_template_yes.uom_id.id,
                 "product_uom_qty": 1,
             }
         )
@@ -135,7 +135,7 @@ class TestSaleOrder(BaseCommon):
                 "product_tmpl_id": self.product_template_yes.id,
                 "price_unit": 100,
                 "name": "Line 1",
-                "product_uom": self.product_template_yes.uom_id.id,
+                "product_uom_id": self.product_template_yes.uom_id.id,
             }
         )
         self.assertFalse(line.can_create_product)
@@ -182,7 +182,7 @@ class TestSaleOrder(BaseCommon):
                             "price_unit": 100,
                             "name": "Line 1",
                             "product_uom_qty": 1,
-                            "product_uom": product.uom_id.id,
+                            "product_uom_id": product.uom_id.id,
                         },
                     )
                 ],
@@ -203,7 +203,7 @@ class TestSaleOrder(BaseCommon):
                 "price_unit": 100,
                 "name": "Line 1",
                 "product_uom_qty": 1,
-                "product_uom": self.product_template_yes.uom_id.id,
+                "product_uom_id": self.product_template_yes.uom_id.id,
                 "product_attribute_ids": [
                     Command.create(
                         {
@@ -221,7 +221,7 @@ class TestSaleOrder(BaseCommon):
             {
                 "order_id": order.id,
                 "product_tmpl_id": self.product_template_no.id,
-                "product_uom": self.product_template_no.uom_id.id,
+                "product_uom_id": self.product_template_no.uom_id.id,
                 "product_uom_qty": 1,
                 "price_unit": 200,
                 "name": "Line 2",
@@ -243,4 +243,18 @@ class TestSaleOrder(BaseCommon):
         )
         self.assertEqual(
             len(order_line_without_product), 0, "All purchase lines must have a product"
+        )
+
+    def test_line_name_with_attribute_names(self):
+        order_form = Form(self.env["sale.order"])
+        order_form.partner_id = self.customer
+        with order_form.order_line.new() as line_form:
+            line_form.product_tmpl_id = self.product_template_yes
+            with line_form.product_attribute_ids.edit(0) as attribute_line_form:
+                attribute_line_form.value_id = self.value1
+        sale = order_form.save()
+        line = sale.order_line
+        self.assertEqual(
+            line.name,
+            f"{self.product_template_yes.name} ({self.value1.name})",
         )
