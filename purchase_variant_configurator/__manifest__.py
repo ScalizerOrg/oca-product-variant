@@ -9,10 +9,7 @@
     "version": "17.0.1.0.1",
     "license": "AGPL-3",
     "depends": ["purchase", "product_variant_configurator"],
-    "author": "AvanzOSC, "
-    "Tecnativa, "
-    "ACSONE SA/NV, "
-    "Odoo Community Association (OCA)",
+    "author": "AvanzOSC, Tecnativa, ACSONE SA/NV, Odoo Community Association (OCA)",
     "category": "Purchase Management",
     "website": "https://github.com/OCA/product-variant",
     "data": [
