@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="purchase.purchase_order_form" />
         <field name="priority" eval="20" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/tree" position="attributes">
+            <xpath expr="//field[@name='order_line']/list" position="attributes">
                 <!-- force using the form -->
                 <attribute name="editable" />
             </xpath>
@@ -30,7 +30,7 @@
                         nolabel="1"
                         colspan="2"
                     >
-                        <tree create="0" delete="0" editable="1">
+                        <list create="0" delete="0" editable="bottom">
                             <field name="owner_model" column_invisible="True" />
                             <field name="owner_id" column_invisible="True" />
                             <field name="attribute_id" force_save="1" />
@@ -44,7 +44,7 @@
                                 name="value_id"
                                 context="{'show_attribute': False, 'default_attribute_id': attribute_id, 'template_for_attribute_value': product_tmpl_id}"
                             />
-                        </tree>
+                        </list>
                     </field>
                     <field name="can_create_product" invisible="True" />
                     <field
@@ -58,16 +58,16 @@
                 position="attributes"
             >
                 <attribute
-                    name="attrs"
-                >{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}</attribute>
+                    name="readonly"
+                >state in ('purchase', 'to approve','done', 'cancel')</attribute>
             </xpath>
             <xpath
                 expr="//field[@name='order_line']/form//field[@name='product_id']"
                 position="attributes"
             >
                 <attribute
-                    name="attrs"
-                >{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}</attribute>
+                    name="readonly"
+                >state in ('purchase', 'to approve','done', 'cancel')</attribute>
                 <attribute name="domain">product_id_configurator_domain</attribute>
             </xpath>
             <xpath
@@ -77,26 +77,24 @@
                 <field name="product_id_configurator_domain" invisible="True" />
             </xpath>
             <xpath
-                expr="//field[@name='order_line']/tree//field[@name='product_id']"
+                expr="//field[@name='order_line']/list//field[@name='product_id']"
                 position="before"
             >
-                <field name="product_tmpl_id" invisible="display_type != False" />
+                <field name="product_tmpl_id" column_invisible="1" />
             </xpath>
             <xpath
-                expr="//field[@name='order_line']/tree//field[@name='product_id']"
+                expr="//field[@name='order_line']/list//field[@name='product_id']"
                 position="after"
             >
                 <field name="product_id_configurator_domain" column_invisible="True" />
                 <field name="product_id_is_required" column_invisible="True" />
             </xpath>
             <xpath
-                expr="//field[@name='order_line']/tree//field[@name='product_id']"
+                expr="//field[@name='order_line']/list//field[@name='product_id']"
                 position="attributes"
             >
                 <attribute name="domain">product_id_configurator_domain</attribute>
-                <attribute
-                    name="attrs"
-                >{'required': [('product_id_is_required', '=', True)]}</attribute>
+                <attribute name="required">product_id_is_required</attribute>
             </xpath>
         </field>
     </record>

@@ -1,6 +1,7 @@
 # Copyright 2016 ACSONE SA/NV
 # Copyright 2024 Tecnativa - Víctor Martínez
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
+from odoo.fields import Command
 from odoo.tests import Form
 
 from odoo.addons.base.tests.common import BaseCommon
@@ -51,9 +52,7 @@ class TestPurchaseOrder(BaseCommon):
                 "categ_id": cls.category1.id,
                 "standard_price": 100,
                 "attribute_line_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "attribute_id": cls.attribute1.id,
                             "value_ids": [(6, 0, [cls.value1.id, cls.value2.id])],
@@ -78,14 +77,14 @@ class TestPurchaseOrder(BaseCommon):
                 "description_purchase": "Purchase Description",
             }
         )
-        cls.env.user.groups_id += cls.env.ref("uom.group_uom")
+        cls.env.user.group_ids += cls.env.ref("uom.group_uom")
 
     def test_onchange_product_tmpl_id_01(self):
         line1 = self.purchase_order_line.new(
             {
                 "product_tmpl_id": self.product_template_yes.id,
                 "price_unit": 100,
-                "product_uom": self.product_template_yes.uom_id.id,
+                "product_uom_id": self.product_template_yes.uom_id.id,
                 "product_qty": 1,
                 "name": "Line 1",
                 "date_planned": "2016-01-01",
@@ -96,7 +95,7 @@ class TestPurchaseOrder(BaseCommon):
         line2 = self.purchase_order_line.new(
             {
                 "product_tmpl_id": self.product_template_no.id,
-                "product_uom": self.product_template_no.uom_id.id,
+                "product_uom_id": self.product_template_no.uom_id.id,
                 "product_qty": 1,
                 "price_unit": 200,
                 "name": "Line 2",
@@ -122,7 +121,7 @@ class TestPurchaseOrder(BaseCommon):
         self.assertFalse(line.product_id)
         self.assertIn("Product template 1", line.name)
         self.assertIn("Purchase Description", line.name)
-        self.assertEqual(line.product_uom, self.product_template_yes.uom_id)
+        self.assertEqual(line.product_uom_id, self.product_template_yes.uom_id)
         self.assertEqual(line.price_unit, 90)
         self.assertEqual(line.product_qty, 11)
         self.assertTrue(line.date_planned)
@@ -137,9 +136,7 @@ class TestPurchaseOrder(BaseCommon):
                 "name": "Test product 01",
                 "product_tmpl_id": self.product_template_yes.id,
                 "product_attribute_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "product_tmpl_id": self.product_template_yes.id,
                             "attribute_id": self.attribute1.id,
@@ -176,7 +173,7 @@ class TestPurchaseOrder(BaseCommon):
                 "name": "Line 1",
                 "product_qty": 1,
                 "date_planned": "2016-01-01",
-                "product_uom": self.product_template_yes.uom_id.id,
+                "product_uom_id": self.product_template_yes.uom_id.id,
             }
         )
         self.assertFalse(line.can_create_product)
@@ -203,9 +200,7 @@ class TestPurchaseOrder(BaseCommon):
                 "name": "Test product 02",
                 "product_tmpl_id": self.product_template_yes.id,
                 "product_attribute_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "product_tmpl_id": self.product_template_yes.id,
                             "attribute_id": self.attribute1.id,
@@ -233,11 +228,9 @@ class TestPurchaseOrder(BaseCommon):
                 "name": "Line 1",
                 "product_qty": 1,
                 "date_planned": "2016-01-01",
-                "product_uom": self.product_template_yes.uom_id.id,
+                "product_uom_id": self.product_template_yes.uom_id.id,
                 "product_attribute_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "product_tmpl_id": self.product_template_yes.id,
                             "attribute_id": self.attribute1.id,
@@ -252,7 +245,7 @@ class TestPurchaseOrder(BaseCommon):
         line_2 = self.purchase_order_line.new(
             {
                 "product_tmpl_id": self.product_template_no.id,
-                "product_uom": self.product_template_no.uom_id.id,
+                "product_uom_id": self.product_template_no.uom_id.id,
                 "product_qty": 1,
                 "price_unit": 200,
                 "name": "Line 2",
@@ -260,16 +253,7 @@ class TestPurchaseOrder(BaseCommon):
                 "create_product_variant": True,
             }
         )
-        for line in (line_1, line_2):
-            line._onchange_product_tmpl_id_configurator()
-            line._onchange_product_id_configurator()
-            line.onchange_product_id()
-            line._onchange_product_attribute_ids_configurator()
-            if line.can_create_product:
-                line.create_variant_if_needed()
-                line.create_product_variant = True
-                line._onchange_create_product_variant()
-        order.write({"order_line": [(4, line_1.id), (4, line_2.id)]})
+        order.order_line = [Command.set(line_1.id), Command.set(line_2.id)]
         order.button_confirm()
         order.flush_recordset()
         order.invalidate_recordset()

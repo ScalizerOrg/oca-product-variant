@@ -28,7 +28,7 @@ class PurchaseOrder(models.Model):
                 partner_id=line.partner_id,
                 quantity=line.product_qty,
                 date=line.order_id.date_order and line.order_id.date_order.date(),
-                uom_id=line.product_uom,
+                uom_id=line.product_uom_id,
             )
             line.date_planned = line._get_date_planned(seller)
         return new_po
@@ -40,48 +40,36 @@ class PurchaseOrderLine(models.Model):
 
     product_id = fields.Many2one(required=False)
     product_id_is_required = fields.Boolean(compute="_compute_product_id_is_required")
-    product_uom_category_id = fields.Many2one(
-        comodel_name="uom.category",
-        compute="_compute_product_uom_category_id",
-        # We need to define related=False so that the field is only compute
-        # and not related.
-        related=False,
+    product_uom_id = fields.Many2one(
+        compute="_compute_product_uom_id",
+        store=True,
+        readonly=False,
     )
 
-    _sql_constraints = [
-        (
-            "accountable_required_fields",
-            "CHECK(display_type IS NOT NULL OR (product_tmpl_id IS NOT NULL OR "
-            "product_id IS NOT NULL AND product_uom IS NOT NULL AND "
-            "date_planned IS NOT NULL))",
-            "Missing required fields on accountable purchase order line.",
-        ),
-        (
-            "non_accountable_null_fields",
-            "CHECK(display_type IS NULL OR (product_tmpl_id IS NULL AND "
-            "product_id IS NULL AND price_unit = 0 AND product_uom_qty = 0 AND "
-            "product_uom IS NULL AND date_planned is NULL))",
-            "Forbidden values on non-accountable purchase order line",
-        ),
-    ]
+    _accountable_required_fields = models.Constraint(
+        "CHECK(display_type IS NOT NULL OR (product_tmpl_id IS NOT NULL OR "
+        "product_id IS NOT NULL AND product_uom_id IS NOT NULL AND "
+        "date_planned IS NOT NULL))",
+        "Missing required fields on accountable purchase order line.",
+    )
+    _non_accountable_null_fields = models.Constraint(
+        "CHECK(display_type IS NULL OR (product_tmpl_id IS NULL AND "
+        "product_id IS NULL AND price_unit = 0 AND product_uom_qty = 0 AND "
+        "product_uom_id IS NULL AND date_planned is NULL))",
+        "Forbidden values on non-accountable purchase order line",
+    )
 
     @api.depends("company_id")
     def _compute_product_id_is_required(self):
         for item in self:
             item.product_id_is_required = not item.company_id.po_confirm_create_variant
 
-    @api.depends("product_tmpl_id", "product_id")
-    def _compute_product_uom_category_id(self):
-        """This compute is intended to do something similar to the related of the
-        purchase module product_id.uom_id.category_id but adding the casuistry of the
-        product_tmpl_id field.
-        """
+    @api.depends("product_id")
+    def _compute_product_uom_id(self):
         for line in self:
-            product = line.product_id or line.product_tmpl_id
-            if product:
-                line.product_uom_category_id = product.uom_id.category_id
-            else:
-                line.product_uom_category_id = line.product_uom_category_id
+            if not line.product_id or line.product_uom_id:
+                continue
+            line.product_uom_id = line.product_id.uom_id
 
     @api.onchange("product_tmpl_id")
     def _onchange_product_tmpl_id_configurator(self):

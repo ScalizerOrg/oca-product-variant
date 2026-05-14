@@ -6,7 +6,7 @@
 {
     "name": "Purchase - Product variants",
     "summary": "Product variants in purchase management",
-    "version": "17.0.1.0.1",
+    "version": "19.0.1.0.0",
     "license": "AGPL-3",
     "depends": ["purchase", "product_variant_configurator"],
     "author": "AvanzOSC, Tecnativa, ACSONE SA/NV, Odoo Community Association (OCA)",

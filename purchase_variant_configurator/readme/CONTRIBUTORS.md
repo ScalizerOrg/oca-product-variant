@@ -5,6 +5,7 @@
   - Pedro M. Baeza
   - David Vidal
   - Ernesto Tejeda
+  - Andrii Kompaniiets
 - [Heliconia Solutions Pvt. Ltd.](https://www.heliconia.io)
   - Bhavesh Heliconia
 

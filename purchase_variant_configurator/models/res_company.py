@@ -10,5 +10,5 @@ class ResCompany(models.Model):
     po_confirm_create_variant = fields.Boolean(
         string="Create variants on confirm",
         help="Create product variants when confirming",
-        default=False,
+        default=True,
     )
