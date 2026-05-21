@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-30 08:37+0000\n"
-"PO-Revision-Date: 2025-08-06 11:25+0000\n"
+"PO-Revision-Date: 2026-05-21 14:46+0000\n"
 "Last-Translator: mymage <stefano.consolaro@mymage.it>\n"
 "Language-Team: Italian (https://www.transifex.com/oca/teams/23907/it/)\n"
 "Language: it\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__product_variant_count
@@ -54,6 +54,7 @@ msgstr "Etichette conto"
 #: model:ir.model.fields,help:product_variant_configurator.field_product_product__uom_ids
 msgid "Additional packagings for this product which can be used for sales"
 msgstr ""
+"Imballi addizionali per questo prodotto che può essere usato per le vendite"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_configurator_attribute__attribute_id
@@ -99,7 +100,7 @@ msgstr "Indice colore"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__combo_ids
 msgid "Combo Choices"
-msgstr ""
+msgstr "Scelte combinate"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__company_id
@@ -119,7 +120,7 @@ msgstr "Valuta costo"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__service_tracking
 msgid "Create on Order"
-msgstr ""
+msgstr "Crea un ordine"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_configurator__create_product_variant
@@ -145,12 +146,12 @@ msgstr "Valuta"
 #. module: product_variant_configurator
 #: model:ir.model.fields,help:product_variant_configurator.field_product_product__supplier_taxes_id
 msgid "Default taxes used when buying the product"
-msgstr ""
+msgstr "Imposte predefinite nell'acquisto del prodotto"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,help:product_variant_configurator.field_product_product__taxes_id
 msgid "Default taxes used when selling the product"
-msgstr ""
+msgstr "Imposte predefinite nella vendita del prodotto"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,help:product_variant_configurator.field_product_product__uom_id
@@ -208,6 +209,8 @@ msgid ""
 "Goods are tangible materials and merchandise you provide.\n"
 "A service is a non-material product you provide."
 msgstr ""
+"I beni sono materiali tangibili e merci che si forniscono. \n"
+"Un servizio è un prodotto immateriale che si fornisce."
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_ir_ui_view__id
@@ -230,7 +233,7 @@ msgstr "Conto ricavi"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__is_dynamically_created
 msgid "Is Dynamically Created"
-msgstr ""
+msgstr "È creata dinamicamente"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__has_configurable_attributes
@@ -298,7 +301,7 @@ msgstr "Modello proprietario"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__uom_ids
 msgid "Packagings"
-msgstr ""
+msgstr "Imballi"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_configurator_attribute__possible_value_ids
@@ -427,7 +430,7 @@ msgstr "Proprietà"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__purchase_ok
 msgid "Purchase"
-msgstr ""
+msgstr "Acquisto"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__description_purchase
@@ -437,7 +440,7 @@ msgstr "Descrizione acquisto"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__supplier_taxes_id
 msgid "Purchase Taxes"
-msgstr ""
+msgstr "Imposte acquisti"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_template_attribute_line__required
@@ -447,7 +450,7 @@ msgstr "Richiesto"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__sale_ok
 msgid "Sales"
-msgstr ""
+msgstr "Vendite"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__description_sale
@@ -462,7 +465,7 @@ msgstr "Prezzo di vendita"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__taxes_id
 msgid "Sales Taxes"
-msgstr ""
+msgstr "Imposte sulle vendite"
 
 #. module: product_variant_configurator
 #: model_terms:ir.ui.view,arch_db:product_variant_configurator.product_variants_view
@@ -479,7 +482,7 @@ msgstr "Sequenza"
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__product_tag_ids
 msgid "Tags"
-msgstr ""
+msgstr "Etichette"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,help:product_variant_configurator.field_product_product__account_tag_ids
@@ -532,12 +535,12 @@ msgstr ""
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__uom_id
 msgid "Unit"
-msgstr ""
+msgstr "Unità"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields,field_description:product_variant_configurator.field_product_product__uom_name
 msgid "Unit Name"
-msgstr ""
+msgstr "Nome unità"
 
 #. module: product_variant_configurator
 #: model:ir.model.fields.selection,name:product_variant_configurator.selection__product_template__no_create_variants__no
