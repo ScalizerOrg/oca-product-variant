@@ -11,10 +11,7 @@
     "development_status": "Production/Stable",
     "license": "AGPL-3",
     "depends": ["sale", "product_variant_configurator"],
-    "author": "OdooMRP team,"
-    "AvanzOSC,"
-    "Tecnativa,"
-    "Odoo Community Association (OCA)",
+    "author": "OdooMRP team,AvanzOSC,Tecnativa,Odoo Community Association (OCA)",
     "category": "Sales Management",
     "website": "https://github.com/OCA/product-variant",
     "data": ["views/sale_view.xml"],
