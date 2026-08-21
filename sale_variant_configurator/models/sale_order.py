@@ -65,16 +65,11 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def _get_product_description(self, template, product, product_attributes):
-        lang = self.order_id._get_lang()
-        if lang != self.env.lang:
-            if template:
-                template = template.with_context(lang=lang)
-            if product:
-                product = product.with_context(lang=lang)
         res = super()._get_product_description(
             template=template, product=product, product_attributes=product_attributes
         )
-        if product and product.description_sale:
+        product = self.product_id.with_context(lang=self.order_partner_id.lang)
+        if product.description_sale:
             res = (res or "") + "\n" + product.description_sale
         return res
 
