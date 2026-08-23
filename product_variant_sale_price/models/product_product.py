@@ -17,7 +17,7 @@ class ProductProduct(models.Model):
     )
     fix_price = fields.Float()
 
-    @api.depends("fix_price")
+    @api.depends("fix_price", "list_price")
     def _compute_lst_price(self):
         uom_model = self.env["uom.uom"]
         for product in self:
@@ -27,6 +27,7 @@ class ProductProduct(models.Model):
                 price = product.uom_id._compute_price(price, context_uom)
             product.lst_price = price
 
+    @api.depends("fix_price", "product_tmpl_id.list_price")
     def _compute_list_price(self):
         uom_model = self.env["uom.uom"]
         for product in self:
