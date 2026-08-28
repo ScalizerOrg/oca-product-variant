@@ -4,6 +4,7 @@
 import itertools
 
 from odoo import api, fields, models
+from odoo.orm.identifiers import NewId
 
 
 class ProductTemplate(models.Model):
@@ -47,8 +48,8 @@ class ProductTemplate(models.Model):
     @api.model
     def _can_add_variant(self, value):
         return not (
-            isinstance(value.attribute_id.id, models.NewId)
-            or isinstance(value.product_attribute_value_id.id, models.NewId)
+            isinstance(value.attribute_id.id, NewId)
+            or isinstance(value.product_attribute_value_id.id, NewId)
         )
 
     @api.depends(
