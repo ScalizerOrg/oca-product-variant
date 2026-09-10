@@ -11,9 +11,11 @@ class ProductProduct(models.Model):
     lst_price = fields.Float(
         compute="_compute_lst_price",
         inverse="_inverse_product_lst_price",
+        min_display_digits="Product Price",
     )
     list_price = fields.Float(
         compute="_compute_list_price",
+        min_display_digits="Product Price",
     )
     fix_price = fields.Float()
 
